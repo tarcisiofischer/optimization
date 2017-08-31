@@ -40,7 +40,21 @@ def equal_interval_search(f, d, x0, strategy_functions_dict, h=1.0, r=0.5, tol=1
         return alpha + equal_interval_search(f, d, x0 + alpha * d, strategy_functions_dict, r * h, r, tol)
 
 
-def armijo_backtracking_line_search(f, d, x0, strategy_functions_dict, alpha_i=1.0, tau=0.5, beta=0.01, tol=1e-6):
+def armijo_backtracking_line_search(
+    f,
+    d,
+    x0,
+    strategy_functions_dict,
+    alpha_i=1.0,
+    tau=0.5,
+    beta=0.01
+    ):
+    '''
+    Will not find the minimum f(x), but an alpha such that f(alpha) < f(x0).
+    beta controls the minimum desired decrease value on the function.
+    tau controls the step break factor (Must be between (0.0, 1.0).
+    alpha_i is an initial guess for increment alpha.
+    '''
     if type(x0) == float:
         x0 = np.array([x0])
 
@@ -55,7 +69,7 @@ def armijo_backtracking_line_search(f, d, x0, strategy_functions_dict, alpha_i=1
 
     logger.info('Starting with alpha = %s' % (alpha,))
     logger.info('f0 = %s' % (f0,))
-    while not (f_alpha < f0 + alpha * beta_gf_d or f_alpha - (f0 + alpha * beta_gf_d) < tol):
+    while f_alpha > f0 + alpha * beta_gf_d:
         alpha = tau * alpha
         f_alpha = f(x0 + alpha * d)
         logger.info('alpha = %s' % (alpha,))
