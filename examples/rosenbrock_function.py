@@ -7,7 +7,8 @@ import functools
 import logging
 import sys
 
-from optimization import default_stop_criterea, armijo_backtracking_line_search
+from optimization import default_stop_criterea, armijo_backtracking_line_search, \
+    equal_interval_search
 from optimization.defaults import DEFAULT_STRATEGY_FUNCTIONS
 from optimization.minimize import minimize
 import numpy as np
@@ -26,5 +27,3 @@ strategy_functions_dict['compute_step'] = functools.partial(armijo_backtracking_
 x_star = minimize(f, np.array([-3.0, -4.0]), strategy_functions_dict)
 print(x_star)
 print(f(x_star))
-
-# print(f(np.array([1, 1])))
