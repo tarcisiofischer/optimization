@@ -1,0 +1,9 @@
+name: optimization_study 
+channels:
+  - defaults
+dependencies:
+  - python==3.5.3
+  - pytest
+  - scipy
+  - matplotlib
+
