@@ -3,13 +3,13 @@ from optimization.defaults import DEFAULT_STRATEGY_FUNCTIONS
 import numpy as np
 
 
+_arora_example_f = lambda x: 2 - 4 * x[0] + np.e ** x[0]
+_arora_example_minimizer = 1.386511
+_arora_example_minimum = _arora_example_f(np.array([_arora_example_minimizer]))
+
 def test_equally_spaced_line_search():
-    f = lambda x: 2 - 4 * x[0] + np.e ** x[0]
-
     x0 = 0.0
-    d = +1.0
-    alpha = equal_interval_search(f, d, x0, DEFAULT_STRATEGY_FUNCTIONS)
-    # Expected result computed on Arora's book - Seems not to be very close to the actual solution
-    expected_alpha = 1.386511
-
-    assert abs(alpha - expected_alpha) <= 1e-2
+    d = np.array([+1.0])
+    alpha = equal_interval_search(_arora_example_f, d, x0, DEFAULT_STRATEGY_FUNCTIONS, tol=1e-6)
+    minimum = _arora_example_f(alpha * d)
+    assert abs(minimum - _arora_example_minimum) <= 1e-6
