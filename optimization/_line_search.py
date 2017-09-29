@@ -75,4 +75,4 @@ def armijo_backtracking_line_search(
         logger.info('alpha = %s' % (alpha,))
         logger.info('f_alpha = %s' % (f_alpha,))
 
-    return x0 + alpha * d
+    return alpha

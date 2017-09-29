@@ -11,8 +11,7 @@ import functools
 import logging
 import sys
 
-from optimization import default_stop_criterea, equal_interval_search, \
-    armijo_backtracking_line_search
+from optimization import default_stop_criterea, armijo_backtracking_line_search
 from optimization.defaults import DEFAULT_STRATEGY_FUNCTIONS
 from optimization.minimize import minimize
 import numpy as np
@@ -27,7 +26,6 @@ f = lambda x: sphere_f(N_DIM, np.arange(0, N_DIM), x)
 
 strategy_functions_dict = DEFAULT_STRATEGY_FUNCTIONS
 strategy_functions_dict['stop_criterea'] = functools.partial(default_stop_criterea, tol=1e-2)
-# strategy_functions_dict['compute_step'] = functools.partial(equal_interval_search, tol=1e-4)
 strategy_functions_dict['compute_step'] = functools.partial(armijo_backtracking_line_search, alpha_i=2.0)
 
 x_star = minimize(f, np.array([99.0] * N_DIM))
