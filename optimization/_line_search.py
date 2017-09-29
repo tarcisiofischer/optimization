@@ -52,10 +52,10 @@ def armijo_backtracking_line_search(
     '''
     Will not find the minimum f(x), but an alpha such that f(alpha) < f(x0).
     beta controls the minimum desired decrease value on the function.
-    tau controls the step break factor (Must be between (0.0, 1.0).
+    tau controls the step break factor (Must be between (0.0, 1.0)).
     alpha_i is an initial guess for increment alpha.
     '''
-    if type(x0) == float:
+    if type(x0) == float or type(x0) == np.float64:
         x0 = np.array([x0])
 
     assert 0.0 < beta < 1.0, 'beta must be in range (0.0, 1.0)'
@@ -75,4 +75,4 @@ def armijo_backtracking_line_search(
         logger.info('alpha = %s' % (alpha,))
         logger.info('f_alpha = %s' % (f_alpha,))
 
-    return alpha
+    return x0 + alpha * d
