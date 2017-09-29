@@ -8,4 +8,5 @@ DEFAULT_STRATEGY_FUNCTIONS = {
     'stop_criterea': default_stop_criterea,
     'compute_direction': steepest_descent,
     'compute_step': equal_interval_search,
+    'plot_helper': lambda *args, **kwargs: None,
 }

@@ -9,9 +9,12 @@ def minimize(f, x0, strategy_functions_dict=None):
 
     x = x0
     it = 0
+    strategy_functions_dict['plot_helper'](x, it)
     while not strategy_functions_dict['stop_criterea'](f, x, it, strategy_functions_dict):
         d = strategy_functions_dict['compute_direction'](f, x, strategy_functions_dict)
         alpha = strategy_functions_dict['compute_step'](f, d, x, strategy_functions_dict)
         x += alpha * d
         it += 1
+
+        strategy_functions_dict['plot_helper'](x, it)
     return x
