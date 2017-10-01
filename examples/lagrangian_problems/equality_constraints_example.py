@@ -21,7 +21,7 @@ import numpy as np
 
 
 ENABLE_PLOT = True
-AUGMENTED_LAGRANGIAN = True
+AUGMENTED_LAGRANGIAN = False
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 f = lambda x: x[0] + x[1]
