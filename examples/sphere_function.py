@@ -14,8 +14,9 @@ import sys
 from optimization import default_stop_criterea, armijo_backtracking_line_search
 from optimization.defaults import DEFAULT_STRATEGY_FUNCTIONS
 from optimization.minimize import minimize
-import numpy as np
 from optimization.plotting import FunctionPlotterHelper
+import numpy as np
+
 
 ENABLE_PLOT = True
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -30,13 +31,25 @@ strategy_functions_dict['compute_step'] = functools.partial(armijo_backtracking_
 
 if ENABLE_PLOT:
     p = FunctionPlotterHelper(f)
+    p.set_x_range(-10.0, 10.0)
+    p.set_y_range(-10.0, 10.0)
+    levels = np.r_[
+        np.linspace(0.0, 20.0, 4, endpoint=False),
+        np.linspace(20.0, 100.0, 6, endpoint=False),
+        np.linspace(100.0, 120.0, 3, endpoint=False),
+    ]
+    p.set_levels(levels)
+
     strategy_functions_dict['plot_helper'] = p.save_data_for_plot
+    p.draw_function()
 initial_guess = np.array([10.0] * N_DIM)
 
 x_star = minimize(f, initial_guess)
 
-print(x_star)
-print(f(x_star))
+print("x_min = %s" % (x_star,))
+print("f(x_min) = %s" % (f(x_star),))
 
 if ENABLE_PLOT:
-    p.plot()
+    p.draw_solution_path()
+    import matplotlib.pyplot as plt
+    plt.show()
