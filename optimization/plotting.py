@@ -28,13 +28,21 @@ class FunctionPlotterHelper(object):
         self._levels = levels
 
 
-    def draw_function(self):
+    def draw_function(self, broadcastable=True):
         X, Y = np.meshgrid(self._xrange, self._yrange)
 
-        if self._levels is not None:
-            cp = plt.contour(X, Y, self._f(np.array([X, Y])), self._levels, cmap=self.DEFAULT_CMAP)
+        if broadcastable:
+            F = self._f(np.array([X, Y]))
         else:
-            cp = plt.contour(X, Y, self._f(np.array([X, Y])), cmap=self.DEFAULT_CMAP)
+            F = np.zeros_like(X)
+            for ii, xx in enumerate(self._xrange):
+                for jj, yy in enumerate(self._yrange):
+                    F[ii][jj] = self._f(np.array([xx, yy]))
+
+        if self._levels is not None:
+            cp = plt.contour(X, Y, F, self._levels, cmap=self.DEFAULT_CMAP)
+        else:
+            cp = plt.contour(X, Y, F, cmap=self.DEFAULT_CMAP)
         plt.colorbar(cp)
         plt.clabel(cp, inline=1, fontsize=5)
 

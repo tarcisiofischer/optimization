@@ -21,7 +21,7 @@ import numpy as np
 
 
 ENABLE_PLOT = True
-AUGMENTED_LAGRANGIAN = False
+AUGMENTED_LAGRANGIAN = True
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 f = lambda x: x[0] + x[1]
@@ -40,7 +40,7 @@ if AUGMENTED_LAGRANGIAN:
     # Augmented lagrangian will add quadratic penalization with a factor phi.
     # Note that when phi = 0.0, this is the default lagrangian method.
     #
-    phi = 1000.0
+    phi = 100.0
     L = lambda x: \
         f(x) + \
         x[2] * h(x) + \
@@ -48,10 +48,10 @@ if AUGMENTED_LAGRANGIAN:
     grad_L = lambda f, x: np.array([
         grad_f(x)[0] + \
             x[2] * grad_h(x)[0] + \
-            (phi / 2.0 * h(x) * grad_h(x)[0]),
+            (phi / 2.0 * 2.0 * h(x) * grad_h(x)[0]),
         grad_f(x)[1] + \
             x[2] * grad_h(x)[1] + \
-            (phi / 2.0 * h(x) * grad_h(x)[1]),
+            (phi / 2.0 * 2.0 * h(x) * grad_h(x)[1]),
         h(x)
     ])
 else:
