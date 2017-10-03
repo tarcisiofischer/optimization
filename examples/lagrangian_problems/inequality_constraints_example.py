@@ -10,19 +10,18 @@ from optimization import default_stop_criterea, armijo_backtracking_line_search
 from optimization.defaults import DEFAULT_STRATEGY_FUNCTIONS
 from optimization.minimize import minimize
 from optimization.plotting import FunctionPlotterHelper
+from optimization.utils import build_augmented_lagrangian
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 ENABLE_PLOT = True
-# method = 'lagrangian'
-# method = 'lagrangian without Z'
-method = 'augmented lagrangian'
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 f = lambda x: x[0] ** 2 - x[1] ** 2
 g_ = lambda x: x[0] ** 2 + x[1] ** 2
 g = lambda x: g_(x) - 1
+
 grad_f = lambda x: np.array([
     2 * x[0],  # df/dx
     - 2 * x[1],  # df/dy
@@ -32,71 +31,29 @@ grad_g = lambda x: np.array([
     2 * x[1],  # dg/dy
 ])
 
-if method == 'lagrangian':
-    L = lambda x: \
-        f(x) + \
-        x[2] * (g(x) + x[3])
-    grad_L = lambda f, x: np.array([
-        grad_f(x)[0] + \
-            x[2] * grad_g(x)[0],
-        grad_f(x)[1] + \
-            x[2] * grad_g(x)[1],
-        g(x) + x[3],
-        2 * x[2] * x[3]
-    ])
-    initial_guess_for_extra_vars = [0.0, 0.0]
-elif method == 'lagrangian without Z':
-    g_plus = lambda x: max(g(x), 0.0)
-    L = lambda x: \
-        f(x) + \
-        x[2] * g_plus(x)
-
-    grad_g_plus = lambda x: np.array([
-        max(2 * x[0], 0.0),  # dg/dx
-        max(2 * x[1], 0.0),  # dg/dy
-    ])
-    grad_L = lambda f, x: np.array([
-        grad_f(x)[0] + \
-            x[2] * grad_g_plus(x)[0],
-        grad_f(x)[1] + \
-            x[2] * grad_g_plus(x)[1],
-        g_plus(x)
-    ])
-    initial_guess_for_extra_vars = [0.0]
-elif method == 'augmented lagrangian':
-    phi = 10000.0
-    g_plus = lambda x: max(g(x), -x[2] / phi)
-    L = lambda x: \
-        f(x) + \
-        x[2] * g_plus(x) + \
-        phi / 2.0 * g_plus(x) ** 2
-
-    grad_g_plus = lambda x: np.array([
-        max(2 * x[0], 0.0),  # dg/dx
-        max(2 * x[1], 0.0),  # dg/dy
-    ])
-    grad_L = lambda f, x: np.array([
-        grad_f(x)[0] + \
-            x[2] * grad_g_plus(x)[0] + \
-            (phi / 2.0 * g_plus(x) * grad_g_plus(x)[0]),
-        grad_f(x)[1] + \
-            x[2] * grad_g_plus(x)[1] + \
-            (phi / 2.0 * g_plus(x) * grad_g_plus(x)[1]),
-        g_plus(x)
-    ])
-    initial_guess_for_extra_vars = [0.0]
+phi = 10000.0
+L, grad_L = build_augmented_lagrangian(
+    f,
+    2,
+    [],
+    [g],
+    phi,
+    grad_f,
+    [],
+    [grad_g],
+)
 
 initial_guesses = [
-    (np.r_[np.array([1e-8, 1e-8]), initial_guess_for_extra_vars] , 'g:'),
-    (np.r_[np.array([0.1, 0.5]), initial_guess_for_extra_vars] , 'r:'),
-    (np.r_[np.array([0.8, -0.5]), initial_guess_for_extra_vars] , 'b:'),
-    (np.r_[np.array([-0.9, 0.1]), initial_guess_for_extra_vars] , 'y:'),
+    (np.r_[np.array([1e-8, 1e-8]), [0.0]] , 'g:'),
+    (np.r_[np.array([0.1, 0.5]), [0.0]] , 'r:'),
+    (np.r_[np.array([0.8, -0.5]), [0.0]] , 'b:'),
+    (np.r_[np.array([-0.9, 0.1]), [0.0]] , 'y:'),
 ]
 
 strategy_functions_dict = DEFAULT_STRATEGY_FUNCTIONS
 strategy_functions_dict['stop_criterea'] = functools.partial(default_stop_criterea, tol=1e-6, max_iter=800)
 strategy_functions_dict['compute_step'] = functools.partial(armijo_backtracking_line_search, alpha_i=1.0)
-strategy_functions_dict['grad_f'] = grad_L
+strategy_functions_dict['grad_f'] = lambda f, x: grad_L(x)
 if ENABLE_PLOT:
     p = FunctionPlotterHelper(f)
     p.set_x_range(-2.0, 2.0)

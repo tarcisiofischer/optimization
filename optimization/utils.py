@@ -54,8 +54,8 @@ def build_augmented_lagrangian(
             h_i = equality_constraints[i](xx)
             grad_h_i = dequality_constraintsdxx[i](xx)
 
-            dL_dxx += lamb_i * h_i
-            dL_dxx += phi_i / 2.0 * h_i * grad_h_i
+            dL_dxx += lamb_i * grad_h_i
+            dL_dxx += phi_i * h_i * grad_h_i
 
             grad_eq.append(h_i)
         grad_ineq = []
@@ -67,7 +67,7 @@ def build_augmented_lagrangian(
             g_j_plus = max(-mi_j / phi_j, g_j)
             grad_g_j_plus = np.array([max(0.0, dg_jdxx_i) for dg_jdxx_i in dg_jdxx])
 
-            dL_dxx += mi_j * g_j
+            dL_dxx += mi_j * grad_g_j_plus
             dL_dxx += phi_j * g_j_plus * grad_g_j_plus
 
             grad_ineq.append(g_j)

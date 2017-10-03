@@ -16,55 +16,37 @@ from optimization import default_stop_criterea, armijo_backtracking_line_search
 from optimization.defaults import DEFAULT_STRATEGY_FUNCTIONS
 from optimization.minimize import minimize
 from optimization.plotting import FunctionPlotterHelper
+from optimization.utils import build_augmented_lagrangian
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 ENABLE_PLOT = True
-AUGMENTED_LAGRANGIAN = True
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 f = lambda x: x[0] + x[1]
 h_ = lambda x: x[0] ** 2 + x[1] ** 2
 h = lambda x: h_(x) - 1
 grad_f = lambda x: np.array([
-    1,  # df/dx
-    1,  # df/dy
+    1.0,  # df/dx
+    1.0,  # df/dy
 ])
 grad_h = lambda x: np.array([
-    2 * x[0],  # dh/dx
-    2 * x[1],  # dh/dy
+    2.0 * x[0],  # dh/dx
+    2.0 * x[1],  # dh/dy
 ])
 
-if AUGMENTED_LAGRANGIAN:
-    # Augmented lagrangian will add quadratic penalization with a factor phi.
-    # Note that when phi = 0.0, this is the default lagrangian method.
-    #
-    phi = 100.0
-    L = lambda x: \
-        f(x) + \
-        x[2] * h(x) + \
-        phi / 2.0 * h(x) ** 2
-    grad_L = lambda f, x: np.array([
-        grad_f(x)[0] + \
-            x[2] * grad_h(x)[0] + \
-            (phi / 2.0 * 2.0 * h(x) * grad_h(x)[0]),
-        grad_f(x)[1] + \
-            x[2] * grad_h(x)[1] + \
-            (phi / 2.0 * 2.0 * h(x) * grad_h(x)[1]),
-        h(x)
-    ])
-else:
-    L = lambda x: \
-        f(x) + \
-        x[2] * h(x)
-    grad_L = lambda f, x: np.array([
-        grad_f(x)[0] + \
-            x[2] * grad_h(x)[0],
-        grad_f(x)[1] + \
-            x[2] * grad_h(x)[1],
-        h(x)
-    ])
+phi = 100.0
+L, grad_L = build_augmented_lagrangian(
+    f,
+    2,
+    [h],
+    [],
+    phi,
+    grad_f,
+    [grad_h],
+    []
+)
 
 initial_guesses = [
     (np.array([0.0, 0.0, 0.0]) , 'g:'),
@@ -78,7 +60,7 @@ initial_guesses = [
 strategy_functions_dict = DEFAULT_STRATEGY_FUNCTIONS
 strategy_functions_dict['stop_criterea'] = functools.partial(default_stop_criterea, tol=1e-6, max_iter=800)
 strategy_functions_dict['compute_step'] = functools.partial(armijo_backtracking_line_search, alpha_i=0.1)
-strategy_functions_dict['grad_f'] = grad_L
+strategy_functions_dict['grad_f'] = lambda f, x: grad_L(x)
 if ENABLE_PLOT:
     p = FunctionPlotterHelper(f)
     p.set_x_range(-2.0, 2.0)
