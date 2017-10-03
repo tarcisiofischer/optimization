@@ -70,7 +70,7 @@ def build_augmented_lagrangian(
             dL_dxx += mi_j * grad_g_j_plus
             dL_dxx += phi_j * g_j_plus * grad_g_j_plus
 
-            grad_ineq.append(g_j)
+            grad_ineq.append(g_j_plus)
 
         return np.r_[dL_dxx, grad_eq, grad_ineq]
 
