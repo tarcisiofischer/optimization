@@ -2,7 +2,7 @@ from mpl_toolkits.mplot3d.axes3d import Axes3D
 
 from examples.lagrangian_problems.mechanical_project.constants import P_y_4, h_max, h_min, V_max
 from examples.lagrangian_problems.mechanical_project.linear_system import u
-from examples.lagrangian_problems.mechanical_project.mechanical_project_optimization import g3_
+from examples.lagrangian_problems.mechanical_project.mechanical_project_optimization import V
 from optimization.plotting import FunctionPlotterHelper
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,8 +12,8 @@ f = lambda x: 0.5 * P_y_4 * u(x)[4]
 h3 = 40.0
 
 # 3D function visualization
-xrange = np.arange(h_min, h_max, 1.e-0)
-yrange = np.arange(h_min, h_max, 1.e-0)
+xrange = np.arange(h_min + 10.0, h_max, 1.e-0)
+yrange = np.arange(h_min + 10.0, h_max, 1.e-0)
 X, Y = np.meshgrid(xrange, yrange)
 F = np.zeros_like(X)
 for ii, xx in enumerate(xrange):
@@ -40,6 +40,6 @@ p.draw_function(broadcastable=False)
 
 # Show the constrain level curve
 X, Y = np.meshgrid(p._xrange, p._yrange)
-plt.contour(X, Y, g3_(np.array([X, Y, np.ones_like(X) * h3])), [V_max])
+plt.contour(X, Y, V(np.array([X, Y, np.ones_like(X) * h3])), [V_max])
 
 plt.show()
