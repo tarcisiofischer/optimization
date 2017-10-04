@@ -167,6 +167,13 @@ def dudx(x):
     ])
 
 
+def dfdx_direct(x):
+    partial_df_dx = 0.0
+    partial_df_du = 0.5 * P_y_4
+    partial_du_dx = dudx(x)
+    return partial_df_dx + partial_df_du * partial_du_dx
+
+
 def dfdx_adjoint(x):
     h1, h2, h3 = x[0], x[1], x[2]
 
@@ -200,20 +207,10 @@ def dfdx_adjoint(x):
         [0.0, 0.0, 1.0, 1.0, 1.0, 1.0],
     ]) * dI_3_dh3
 
-    df_du = np.array([
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.5 * P_y_4,
-        0.0
-    ])
-    K_t = K(x).T
-    lamb = np.linalg.solve(K_t, df_du)
-
     df_dh = 0.0
     dF_dh = 0.0
     u_x = u(x)
+    lamb = u_x / 2.0
     return np.array([
         df_dh + np.dot(dF_dh, lamb) - np.dot(np.dot(dKdh1, u_x), lamb),
         df_dh + np.dot(dF_dh, lamb) - np.dot(np.dot(dKdh2, u_x), lamb),
