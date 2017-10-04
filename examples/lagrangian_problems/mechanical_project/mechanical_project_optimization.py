@@ -4,6 +4,8 @@ import sys
 
 from examples.lagrangian_problems.mechanical_project.constants import P_y_4, h_min, h_max, b, V_max, \
     h_ini, L
+from examples.lagrangian_problems.mechanical_project.constraints import dg1_dx, g1, dg2_dx, g2, \
+    dg3_dx, g3, dg4_dx, g4, dg5_dx, g5, dg6_dx, g6, dg7_dx, g7, V
 from examples.lagrangian_problems.mechanical_project.linear_system import u, dudx
 from optimization import armijo_backtracking_line_search, default_stop_criterea
 from optimization.defaults import DEFAULT_STRATEGY_FUNCTIONS
@@ -13,58 +15,11 @@ import numpy as np
 
 
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
-
 f = lambda x: 0.5 * P_y_4 * u(x)[4]
 pdf_dx = lambda x: 0.0
 pdf_du = lambda x: 0.5 * P_y_4
 pdu_dx = lambda x: dudx(x)[:, 4]
 df_dx = lambda x: pdf_dx(x) + pdf_du(x) * pdu_dx(x)
-
-g1 = lambda x: (x[0] - h_max) / h_max
-dg1_dx = lambda x: np.array([
-    1.0 / h_max,
-    0.0,
-    0.0,
-])
-g2 = lambda x: (x[1] - h_max) / h_max
-dg2_dx = lambda x: np.array([
-    0.0,
-    1.0 / h_max,
-    0.0,
-])
-g3 = lambda x: (x[2] - h_max) / h_max
-dg3_dx = lambda x: np.array([
-    0.0,
-    0.0,
-    1.0 / h_max,
-])
-
-g4 = lambda x:(-x[0] + h_min) / h_min
-dg4_dx = lambda x: np.array([
-    - 1.0 / h_min,
-    0.0,
-    0.0,
-])
-g5 = lambda x:(-x[1] + h_min) / h_min
-dg5_dx = lambda x: np.array([
-    0.0,
-    - 1.0 / h_min,
-    0.0,
-])
-g6 = lambda x:(-x[2] + h_min) / h_min
-dg6_dx = lambda x: np.array([
-    0.0,
-    0.0,
-    - 1.0 / h_min
-])
-V = lambda x: x[0] * b * L + x[1] * b * L + x[2] * b * L
-g7 = lambda x: (V(x) - V_max) / V_max
-dg7_dx = lambda x: np.array([
-    b * L / V_max,
-    b * L / V_max,
-    b * L / V_max,
-])
 
 initial_guess = np.array([h_ini, h_ini, h_ini])
 rho_volume = 1000.0

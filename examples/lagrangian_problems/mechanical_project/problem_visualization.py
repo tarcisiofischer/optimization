@@ -1,19 +1,18 @@
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 
-from examples.lagrangian_problems.mechanical_project.constants import P_y_4, h_max, h_min, V_max
-from examples.lagrangian_problems.mechanical_project.linear_system import u
-from examples.lagrangian_problems.mechanical_project.mechanical_project_optimization import V
+from examples.lagrangian_problems.mechanical_project.constants import h_max, h_min, V_max
+from examples.lagrangian_problems.mechanical_project.constraints import V
+from examples.lagrangian_problems.mechanical_project.linear_system import f
 from optimization.plotting import FunctionPlotterHelper
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-f = lambda x: 0.5 * P_y_4 * u(x)[4]
 h3 = 40.0
 
 # 3D function visualization
-xrange = np.arange(h_min + 10.0, h_max, 1.e-0)
-yrange = np.arange(h_min + 10.0, h_max, 1.e-0)
+xrange = np.arange(10.0, 80.0, 1.e-1)
+yrange = np.arange(10.0, 80.0, 1.e-1)
 X, Y = np.meshgrid(xrange, yrange)
 F = np.zeros_like(X)
 for ii, xx in enumerate(xrange):
@@ -33,7 +32,7 @@ p.set_y_range(h_min, h_max, delta=1.0)
 levels = np.r_[
     np.linspace(0.0, 30.0, 12, endpoint=False),
     np.linspace(30.0, 100.0, 8, endpoint=False),
-    np.linspace(100.0, 1000.0, 12, endpoint=False),
+    np.linspace(100.0, 1000.0, 8, endpoint=False),
 ]
 p.set_levels(levels)
 p.draw_function(broadcastable=False)

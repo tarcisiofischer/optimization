@@ -1,7 +1,4 @@
-from numpy.linalg.linalg import LinAlgError
-
 from constants import b, E, L, P_y_4
-from examples.lagrangian_problems.mechanical_project.constants import h_ini
 import numpy as np
 
 
@@ -124,10 +121,7 @@ def u(x):
         P_y_4,
         0.0,
     ])
-    try:
-        K_i = np.linalg.inv(K(x))
-    except:
-        return np.ones_like(F) * 10000.0
+    K_i = np.linalg.inv(K(x))
     return np.dot(K_i, F)
 
 
@@ -225,3 +219,5 @@ def dfdx_adjoint(x):
         df_dh + np.dot(dF_dh, lamb) - np.dot(np.dot(dKdh2, u_x), lamb),
         df_dh + np.dot(dF_dh, lamb) - np.dot(np.dot(dKdh3, u_x), lamb),
     ])
+
+f = lambda x: 0.5 * P_y_4 * u(x)[4]
