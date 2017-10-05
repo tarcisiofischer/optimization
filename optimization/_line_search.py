@@ -1,5 +1,6 @@
 import logging
 
+from optimization import default_grad_f_approx
 import numpy as np
 
 
@@ -29,7 +30,7 @@ def equal_interval_search(f, d, x0, strategy_functions_dict, h=1.0, r=0.5, tol=1
     alpha = (q - 1) * h
 
     # Phase II: Reducing the Interval of Uncertainty
-    gf = strategy_functions_dict['grad_f'](ff, alpha)
+    gf = default_grad_f_approx(ff, alpha)
     logger.info('alpha = %s' % (alpha,))
     logger.info('f(x + alpha*d) = %s' % (ff(alpha),))
     logger.info('grad f = %s' % (gf,))

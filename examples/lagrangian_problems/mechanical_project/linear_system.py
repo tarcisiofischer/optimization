@@ -171,7 +171,7 @@ def dfdx_direct(x):
     partial_df_dx = 0.0
     partial_df_du = 0.5 * P_y_4
     partial_du_dx = dudx(x)
-    return partial_df_dx + partial_df_du * partial_du_dx
+    return (partial_df_dx + partial_df_du * partial_du_dx)[:, 4]
 
 
 def dfdx_adjoint(x):
@@ -215,6 +215,6 @@ def dfdx_adjoint(x):
         df_dh + np.dot(dF_dh, lamb) - np.dot(np.dot(dKdh1, u_x), lamb),
         df_dh + np.dot(dF_dh, lamb) - np.dot(np.dot(dKdh2, u_x), lamb),
         df_dh + np.dot(dF_dh, lamb) - np.dot(np.dot(dKdh3, u_x), lamb),
-    ])
+    ])[:, 4]
 
 f = lambda x: 0.5 * P_y_4 * u(x)[4]
